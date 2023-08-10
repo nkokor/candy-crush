@@ -1,12 +1,12 @@
 const width = 8
 const squares = []
 const colors = [
-  'red',
-  'yellow',
-  'purple',
-  'orange',
-  'green',
-  'blue'
+  'url(images/red.png)',
+  'url(images/blue.png)',
+  'url(images/orange.png)',
+  'url(images/green.png)',
+  'url(images/purple.png)',
+  'url(images/yellow.png)'
 ]
 
 let score = 0
@@ -18,7 +18,7 @@ function setUpBoard() {
     const square = document.createElement('div')
     square.className = 'square'
     let candyColorIndex = Math.floor(Math.random() * colors.length)
-    square.style.backgroundColor = colors[candyColorIndex]
+    square.style.backgroundImage = colors[candyColorIndex]
     square.setAttribute('draggable', true)
     square.setAttribute('id', i)
     board.appendChild(square)
@@ -44,7 +44,7 @@ function addEventListeners() {
 }
 
 function dragStart() {
-  draggedCandy = this.style.backgroundColor
+  draggedCandy = this.style.backgroundImage
   draggedSquare = parseInt(this.id)
   validMoves = [draggedSquare - 1, draggedSquare + 1, draggedSquare - width, draggedSquare + width]
 }
@@ -60,7 +60,7 @@ function dragLeave() {
 }
 
 function dragDrop() {
-  replacedCandy = this.style.backgroundColor
+  replacedCandy = this.style.backgroundImage
   replacedSquare = parseInt(this.id)
   if(validMove()) {
     switchCandies()
@@ -75,10 +75,10 @@ function dragEnd() {
     draggedSquare = null
     draggedCandy = null
   } else if(replacedSquare && validMove() == false){
-    squares[draggedSquare].style.backgroundColor = draggedCandy
-    squares[replacedSquare].style.backgroundColor = replacedCandy
+    squares[draggedSquare].style.backgroundImage = draggedCandy
+    squares[replacedSquare].style.backgroundImage = replacedCandy
   } else {
-    squares[draggedSquare].style.backgroundColor = draggedCandy
+    squares[draggedSquare].style.backgroundImage = draggedCandy
   }
 }
 
@@ -87,21 +87,27 @@ function validMove() {
 }
 
 function switchCandies() {
-  squares[draggedSquare].style.backgroundColor = replacedCandy
-  squares[replacedSquare].style.backgroundColor = draggedCandy
+  squares[draggedSquare].style.backgroundImage = replacedCandy
+  squares[replacedSquare].style.backgroundImage = draggedCandy
 }
 
 function dropCandies() {
   for(let i = 0; i < 55; i++) {
-    if(squares[i + width].style.backgroundColor == 'white') {
-      squares[i + width].style.backgroundColor = squares[i].style.backgroundColor
-      squares[i].style.backgroundColor = 'white'
+    if(squares[i + width].style.backgroundImage == '') {
+      squares[i + width].style.backgroundImage = squares[i].style.backgroundImage
+      squares[i].style.backgroundImage = ''
       const firstRow = [0, 1, 2, 3, 4, 5, 6, 7]
       const isInFirst = firstRow.includes(i)
-      if(isInFirst && squares[i].style.backgroundColor == 'white') {
+      if(isInFirst && squares[i].style.backgroundImage == '') {
         let newColorIndex = Math.floor(Math.random() * colors.length)
-        squares[i].style.backgroundColor = colors[newColorIndex]
+        squares[i].style.backgroundImage = colors[newColorIndex]
       }
+    }
+  }
+  for(let i = 0; i < 8; i++) {
+    if(squares[i].style.backgroundImage == '') {
+      let newColorIndex = Math.floor(Math.random() * colors.length)
+      squares[i].style.backgroundImage = colors[newColorIndex]
     }
   }
 }
@@ -111,15 +117,15 @@ function matchRowOfThree() {
   for(let i = 0; i < 61; i++) {
     if(invalid.includes(i) == false) {
       let sequence = [i, i + 1, i + 2]
-      let matchedColor = squares[i].style.backgroundColor
-      const isEmpty = matchedColor == 'white'
+      let matchedColor = squares[i].style.backgroundImage
+      const isEmpty = matchedColor == ''
       if(!isEmpty && sequence.every(index => {
-        return squares[index].style.backgroundColor == matchedColor
+        return squares[index].style.backgroundImage == matchedColor
       })) {
         score += 3
         scoreBoard.innerHTML = score
         sequence.forEach(index => {
-          squares[index].style.backgroundColor = 'white'
+          squares[index].style.backgroundImage = ''
         })
       }
     }
@@ -131,15 +137,15 @@ function matchRowOfFour() {
   for(let i = 0; i < 60; i++) {
     if(invalid.includes(i) == false) {
       let sequence = [i, i + 1, i + 2, i + 3]
-      let matchedColor = squares[i].style.backgroundColor
-      const isEmpty = matchedColor == 'white'
+      let matchedColor = squares[i].style.backgroundImage
+      const isEmpty = matchedColor == ''
       if(!isEmpty && sequence.every(index => {
-        return squares[index].style.backgroundColor == matchedColor
+        return squares[index].style.backgroundImage == matchedColor
       })) {
         score += 4
         scoreBoard.innerHTML = score
         sequence.forEach(index => {
-          squares[index].style.backgroundColor = 'white'
+          squares[index].style.backgroundImage = ''
         })
       }
     }
@@ -151,15 +157,15 @@ function matchRowOfFive() {
   for(let i = 0; i < 59; i++) {
     if(invalid.includes(i) == false) {
       let sequence = [i, i + 1, i + 2, i + 3, i + 4]
-      let matchedColor = squares[i].style.backgroundColor
-      const isEmpty = matchedColor == 'white'
+      let matchedColor = squares[i].style.backgroundImage
+      const isEmpty = matchedColor == ''
       if(!isEmpty && sequence.every(index => {
-        return squares[index].style.backgroundColor == matchedColor
+        return squares[index].style.backgroundImage == matchedColor
       })) {
         score += 5
         scoreBoard.innerHTML = score
         sequence.forEach(index => {
-          squares[index].style.backgroundColor = 'white'
+          squares[index].style.backgroundImage = ''
         })
       }
     }
@@ -169,15 +175,15 @@ function matchRowOfFive() {
 function matchColumnOfThree() {
   for(let i = 0; i < 47; i++) {
     let sequence = [i, i + 8, i + 16]
-    let matchedColor = squares[i].style.backgroundColor
-    const isEmpty = matchedColor == 'white'
+    let matchedColor = squares[i].style.backgroundImage
+    const isEmpty = matchedColor == ''
     if(!isEmpty && sequence.every(index => {
-      return squares[index].style.backgroundColor == matchedColor
+      return squares[index].style.backgroundImage == matchedColor
     })) {
       score += 3
       scoreBoard.innerHTML = score
       sequence.forEach(index => {
-        squares[index].style.backgroundColor = 'white'
+        squares[index].style.backgroundImage = ''
       })
     }
   }
@@ -186,15 +192,15 @@ function matchColumnOfThree() {
 function matchColumnOfFour() {
   for(let i = 0; i < 39; i++) {
     let sequence = [i, i + 8, i + 16, i + 24]
-    let matchedColor = squares[i].style.backgroundColor
-    const isEmpty = matchedColor == 'white'
+    let matchedColor = squares[i].style.backgroundImage
+    const isEmpty = matchedColor == ''
     if(!isEmpty && sequence.every(index => {
-      return squares[index].style.backgroundColor == matchedColor
+      return squares[index].style.backgroundImage == matchedColor
     })) {
       score += 4
       scoreBoard.innerHTML = score
       sequence.forEach(index => {
-        squares[index].style.backgroundColor = 'white'
+        squares[index].style.backgroundImage = ''
       })
     }
   }
@@ -203,15 +209,15 @@ function matchColumnOfFour() {
 function matchColumnOfFive() {
   for(let i = 0; i < 31; i++) {
     let sequence = [i, i + 8, i + 16, i + 24, i + 32]
-    let matchedColor = squares[i].style.backgroundColor
-    const isEmpty = matchedColor == 'white'
+    let matchedColor = squares[i].style.backgroundImage
+    const isEmpty = matchedColor == ''
     if(!isEmpty && sequence.every(index => {
-      return squares[index].style.backgroundColor == matchedColor
+      return squares[index].style.backgroundImage == matchedColor
     })) {
       score += 5
       scoreBoard.innerHTML = score
       sequence.forEach(index => {
-        squares[index].style.backgroundColor = 'white'
+        squares[index].style.backgroundImage = ''
       })
     }
   }
