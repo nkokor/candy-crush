@@ -21,6 +21,7 @@ function setUpBoard() {
     square.style.backgroundImage = colors[candyColorIndex]
     square.setAttribute('draggable', true)
     square.setAttribute('id', i)
+    square.className = 'square'
     board.appendChild(square)
     squares.push(square)
   }
