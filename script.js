@@ -105,15 +105,33 @@ function matchRowOfThree() {
   }
 }
 
+function matchColumnOfThree() {
+  for(let i = 0; i < 45; i++) {
+    let sequence = [i, i + 8, i + 16]
+    let matchedColor = squares[i].style.backgroundColor
+    const isEmpty = matchedColor == 'white'
+    if(!isEmpty && sequence.every(index => {
+      return squares[index].style.backgroundColor == matchedColor
+    })) {
+      score += 3
+      sequence.forEach(index => {
+        squares[index].style.backgroundColor = 'white'
+      })
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const board = document.getElementById('board')
   setUpBoard()
   addEventListeners()
   matchRowOfThree()
+  matchColumnOfThree()
 })
 
 window.setInterval(function() {
   matchRowOfThree()
+  matchColumnOfThree()
   }, 100
 )
 
