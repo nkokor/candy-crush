@@ -43,6 +43,8 @@ function addEventListeners() {
 }
 
 function dragStart() {
+  var audio = new Audio('sound-effects/pickup.mp3');
+  audio.play();
   draggedCandy = this.style.backgroundImage
   draggedSquare = parseInt(this.id)
   validMoves = [draggedSquare - 1, draggedSquare + 1, draggedSquare - width, draggedSquare + width]
@@ -70,8 +72,12 @@ function dragEnd() {
   } else if(replacedSquare && validMove() == false){
     squares[draggedSquare].style.backgroundImage = draggedCandy
     squares[replacedSquare].style.backgroundImage = replacedCandy
+    var audio = new Audio('sound-effects/drop.mp3');
+    audio.play();
   } else {
     squares[draggedSquare].style.backgroundImage = draggedCandy
+    var audio = new Audio('sound-effects/drop.mp3');
+    audio.play();
   }
 }
 
@@ -120,6 +126,8 @@ function matchRowOfThree() {
         sequence.forEach(index => {
           squares[index].style.backgroundImage = ''
         })
+        var audio = new Audio('sound-effects/match1.mp3');
+        audio.play();
       }
     }
   }
@@ -140,6 +148,8 @@ function matchRowOfFour() {
         sequence.forEach(index => {
           squares[index].style.backgroundImage = ''
         })
+        var audio = new Audio('sound-effects/match2.mp3');
+        audio.play();
       }
     }
   }
@@ -160,6 +170,8 @@ function matchRowOfFive() {
         sequence.forEach(index => {
           squares[index].style.backgroundImage = ''
         })
+        var audio = new Audio('sound-effects/match3.mp3');
+        audio.play();
       }
     }
   }
@@ -178,6 +190,8 @@ function matchColumnOfThree() {
       sequence.forEach(index => {
         squares[index].style.backgroundImage = ''
       })
+      var audio = new Audio('sound-effects/match1.mp3');
+      audio.play();
     }
   }
 }
@@ -195,6 +209,8 @@ function matchColumnOfFour() {
       sequence.forEach(index => {
         squares[index].style.backgroundImage = ''
       })
+      var audio = new Audio('sound-effects/match2.mp3');
+      audio.play();
     }
   }
 }
@@ -212,8 +228,19 @@ function matchColumnOfFive() {
       sequence.forEach(index => {
         squares[index].style.backgroundImage = ''
       })
+      var audio = new Audio('sound-effects/match3.mp3');
+      audio.play();
     }
   }
+}
+
+function matchCandies() {
+  matchRowOfFive()
+  matchRowOfFour()
+  matchRowOfThree()
+  matchColumnOfFive()
+  matchColumnOfFour()
+  matchColumnOfThree()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -221,22 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
   setUpBoard()
   dropCandies()
   addEventListeners()
-  matchRowOfFive()
-  matchRowOfFour()
-  matchRowOfThree()
-  matchColumnOfFive()
-  matchColumnOfFour()
-  matchColumnOfThree()
+  matchCandies()
 })
 
 window.setInterval(function() {
   dropCandies()
-  matchRowOfFive()
-  matchRowOfFour()
-  matchRowOfThree()
-  matchColumnOfFive()
-  matchColumnOfFour()
-  matchColumnOfThree()
+  matchCandies()
   }, 100
 )
 
