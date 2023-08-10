@@ -9,6 +9,8 @@ const colors = [
   'blue'
 ]
 
+let score = 0
+
 function setUpBoard() {
   for(let i = 0; i < 64; i++) {
     const square = document.createElement('div')
@@ -43,20 +45,16 @@ function dragStart() {
   draggedCandy = this.style.backgroundColor
   draggedSquare = parseInt(this.id)
   validMoves = [draggedSquare - 1, draggedSquare + 1, draggedSquare - width, draggedSquare + width]
-  console.log(this.id, 'dragstart')
 }
 
 function dragOver(event) {
   event.preventDefault()
-  console.log(this.id, 'dragover')
 }
 
 function dragEnter() {
-  console.log(this.id, 'dragenter')
 }
 
 function dragLeave() {
-  console.log(this.id, 'dragleave')
 }
 
 function dragDrop() {
@@ -65,11 +63,9 @@ function dragDrop() {
   if(validMove()) {
     switchCandies()
   }
-  console.log(this.id, 'dragdrop')
 }
 
 function dragEnd() {
-  console.log(this.id, 'dragend')
   if(replacedSquare && validMove()) {
     replacedSquare = null
     replacedCandy = null
@@ -93,10 +89,32 @@ function switchCandies() {
   squares[replacedSquare].style.backgroundColor = draggedCandy
 }
 
+function matchRowOfThree() {
+  for(let i = 0; i < 61; i++) {
+    let sequence = [i, i + 1, i + 2]
+    let matchedColor = squares[i].style.backgroundColor
+    const isEmpty = matchedColor == 'white'
+    if(!isEmpty && sequence.every(index => {
+      return squares[index].style.backgroundColor == matchedColor
+    })) {
+      score += 3
+      sequence.forEach(index => {
+        squares[index].style.backgroundColor = 'white'
+      })
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const board = document.getElementById('board')
   setUpBoard()
   addEventListeners()
+  matchRowOfThree()
 })
+
+window.setInterval(function() {
+  matchRowOfThree()
+  }, 100
+)
 
 
