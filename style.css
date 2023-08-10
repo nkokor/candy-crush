@@ -1,0 +1,8 @@
+#board {
+  margin: auto;
+  margin-top: 90px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  width: 560px;
+  height: 560px;
+}
