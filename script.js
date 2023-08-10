@@ -1,12 +1,12 @@
 const width = 8
 const squares = []
 const colors = [
-  'url(images/red.png)',
-  'url(images/blue.png)',
-  'url(images/orange.png)',
-  'url(images/green.png)',
-  'url(images/purple.png)',
-  'url(images/yellow.png)'
+  'url(images/pig.png)',
+  'url(images/cow.png)',
+  'url(images/mouse.png)',
+  'url(images/puppy.png)',
+  'url(images/bumblebee.png)',
+  'url(images/bear.png)'
 ]
 
 let score = 0
@@ -37,8 +37,6 @@ function addEventListeners() {
   squares.forEach(square => {
     square.addEventListener('dragstart', dragStart)
     square.addEventListener('dragover', dragOver)
-    square.addEventListener('dragenter', dragEnter)
-    square.addEventListener('dragleave', dragLeave)
     square.addEventListener('drop', dragDrop)
     square.addEventListener('dragend', dragEnd)
   })
@@ -52,12 +50,6 @@ function dragStart() {
 
 function dragOver(event) {
   event.preventDefault()
-}
-
-function dragEnter() {
-}
-
-function dragLeave() {
 }
 
 function dragDrop() {
