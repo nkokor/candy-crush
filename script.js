@@ -35,10 +35,27 @@ let validMoves
 
 function addEventListeners() {
   squares.forEach(square => {
-    square.addEventListener('dragstart', dragStart)
-    square.addEventListener('dragover', dragOver)
-    square.addEventListener('drop', dragDrop)
-    square.addEventListener('dragend', dragEnd)
+    if(square.style.backgroundImage != '' && !square.style.backgroundImage.includes('bomb')) {
+      square.addEventListener('dragstart', dragStart)
+      square.addEventListener('dragover', dragOver)
+      square.addEventListener('drop', dragDrop)
+      square.addEventListener('dragend', dragEnd)
+    } else if(square.style.backgroundImage.includes('bomb')) {
+      square.addEventListener('click', popCandies)
+    }
+  })
+}
+
+function removeEventListeners() {
+  squares.forEach(square => {
+    if(square.style.backgroundImage != '' && !square.style.backgroundImage.includes('bomb')) {
+      square.removeEventListener('dragstart', dragStart)
+      square.removeEventListener('dragover', dragOver)
+      square.removeEventListener('drop', dragDrop)
+      square.removeEventListener('dragend', dragEnd)
+    } else if(square.style.backgroundImage.includes('bomb')) {
+      square.removeEventListener('click', popCandies)
+    }
   })
 }
 
@@ -81,6 +98,14 @@ function dragEnd() {
   }
 }
 
+function popCandies() {
+  var audio = new Audio('sound-effects/bomb-pop.mp3');
+  audio.play();
+  for(i = 0; i < 64; i++) {
+    squares[i].style.backgroundImage = ''
+  }
+}
+
 function validMove() {
   return validMoves.includes(replacedSquare)
 }
@@ -91,7 +116,7 @@ function switchCandies() {
 }
 
 function dropCandies() {
-  for(let i = 0; i < 55; i++) {
+  for(let i = 0; i < 56; i++) {
     if(squares[i + width].style.backgroundImage == '') {
       squares[i + width].style.backgroundImage = squares[i].style.backgroundImage
       squares[i].style.backgroundImage = ''
@@ -146,31 +171,15 @@ function matchRowOfFour() {
         score += 4
         scoreBoard.innerHTML = score
         sequence.forEach(index => {
-          squares[index].style.backgroundImage = ''
+          if(index == i) {
+            squares[index].style.backgroundImage = "url(images/bomb.png)"
+            var audio = new Audio('sound-effects/bomb-created.mp3');
+            audio.play();
+          } else {
+            squares[index].style.backgroundImage = ''
+          }
         })
         var audio = new Audio('sound-effects/match2.mp3');
-        audio.play();
-      }
-    }
-  }
-}
-
-function matchRowOfFive() {
-  const invalid = [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31, 36, 37, 38, 39, 44, 45, 46, 47, 52, 53, 54, 55]
-  for(let i = 0; i < 59; i++) {
-    if(invalid.includes(i) == false) {
-      let sequence = [i, i + 1, i + 2, i + 3, i + 4]
-      let matchedColor = squares[i].style.backgroundImage
-      const isEmpty = matchedColor == ''
-      if(!isEmpty && sequence.every(index => {
-        return squares[index].style.backgroundImage == matchedColor
-      })) {
-        score += 5
-        scoreBoard.innerHTML = score
-        sequence.forEach(index => {
-          squares[index].style.backgroundImage = ''
-        })
-        var audio = new Audio('sound-effects/match3.mp3');
         audio.play();
       }
     }
@@ -207,7 +216,13 @@ function matchColumnOfFour() {
       score += 4
       scoreBoard.innerHTML = score
       sequence.forEach(index => {
-        squares[index].style.backgroundImage = ''
+        if(index == i) {
+          squares[index].style.backgroundImage = "url(images/bomb.png)"
+          var audio = new Audio('sound-effects/bomb-created.mp3');
+          audio.play();
+        } else {
+          squares[index].style.backgroundImage = ''
+        }
       })
       var audio = new Audio('sound-effects/match2.mp3');
       audio.play();
@@ -215,43 +230,24 @@ function matchColumnOfFour() {
   }
 }
 
-function matchColumnOfFive() {
-  for(let i = 0; i < 31; i++) {
-    let sequence = [i, i + 8, i + 16, i + 24, i + 32]
-    let matchedColor = squares[i].style.backgroundImage
-    const isEmpty = matchedColor == ''
-    if(!isEmpty && sequence.every(index => {
-      return squares[index].style.backgroundImage == matchedColor
-    })) {
-      score += 5
-      scoreBoard.innerHTML = score
-      sequence.forEach(index => {
-        squares[index].style.backgroundImage = ''
-      })
-      var audio = new Audio('sound-effects/match3.mp3');
-      audio.play();
-    }
-  }
-}
-
 function matchCandies() {
-  matchRowOfFive()
   matchRowOfFour()
-  matchRowOfThree()
-  matchColumnOfFive()
   matchColumnOfFour()
+  matchRowOfThree()
   matchColumnOfThree()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const board = document.getElementById('board')
   setUpBoard()
-  dropCandies()
   addEventListeners()
+  dropCandies()
   matchCandies()
 })
 
 window.setInterval(function() {
+  removeEventListeners()
+  addEventListeners()
   dropCandies()
   matchCandies()
   }, 100
