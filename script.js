@@ -188,7 +188,7 @@ function handleScore(candiesCollected) {
     candiesLeft = 0
     var audio = new Audio('sound-effects/level-up.mp3');
     audio.play();
-    currentLevel += 1
+    currentLevel + 1 < levels.length ? currentLevel += 1 : currentLevel = 0
     setLevel()
   } else {
     candiesLeft -= candiesCollected
@@ -296,7 +296,38 @@ function matchColumnOfFour() {
   }
 }
 
+function matchSquareOfFour() {
+  const invalid = [7, 15, 23, 31, 39, 47]
+  for(let i = 0; i < 55; i++) {
+    if(!invalid.includes(i)) {
+      let sequence = [i, i + 1, i + 8, i + 9]
+      let matchedColor = squares[i].style.backgroundImage
+      const isEmpty = matchedColor == ''
+      if(!isEmpty && sequence.every(index => {
+        return squares[index].style.backgroundImage == matchedColor
+      })) {
+        if(matchedColor === requiredCandyImage.style.backgroundImage) {
+          handleScore(4)
+          candiesInfo.innerText = candiesLeft
+        }
+        sequence.forEach(index => {
+          if(index == i) {
+            squares[index].style.backgroundImage = "url(images/bomb.png)"
+            var audio = new Audio('sound-effects/bomb-created.mp3');
+            audio.play();
+          } else {
+            squares[index].style.backgroundImage = ''
+          }
+        })
+        var audio = new Audio('sound-effects/match2.mp3');
+        audio.play();
+      }
+    }
+  }
+}
+
 function matchCandies() {
+  matchSquareOfFour()
   matchRowOfFour()
   matchColumnOfFour()
   matchRowOfThree()
