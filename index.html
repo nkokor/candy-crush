@@ -8,13 +8,26 @@
   <body>
     <div id="content">
       <div id="board"></div>
-      <div id="score-div">
-        <p id="score-text">
-          Score: 
-          <span id="score"></span>
-        </p>
+      <div id="control-div">
+        <div id="info-div">
+          <div id="level-div" class="information-container">
+            <p id="level-p"></p>
+            <p id="level"></p>
+          </div>
+          <div id="moves-div" class="information-container">
+            <p id="moves-p"></p>
+            <p id="moves"></p>
+          </div>
+          <div id="candies-div" class="information-container">
+            <div id="candy"></div>
+            <p id="candies-p"></p>
+            <p id="candies"></p>
+          </div>
+        </div>
+        <div id="button"></div>
       </div>
     </div>
+    <script src="levels.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

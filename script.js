@@ -1,5 +1,7 @@
 const width = 8
+
 const squares = []
+
 const colors = [
   'url(images/pig.png)',
   'url(images/cow.png)',
@@ -9,9 +11,29 @@ const colors = [
   'url(images/bear.png)'
 ]
 
-let score = 0
 let scoreBoard = document.getElementById('score')
-scoreBoard.innerHTML = score
+let movesTitle = document.getElementById('moves-p')
+let movesInfo = document.getElementById('moves')
+let levelTitle = document.getElementById('level-p')
+let levelInfo = document.getElementById('level')
+let requiredCandyImage = document.getElementById('candy')
+let candiesTimes = document.getElementById('candies-p')
+let candiesInfo = document.getElementById('candies')
+
+let currentLevel = 0
+let movesAvailable = 0
+let candiesLeft = 0
+
+let playButton = document.getElementById('button')
+playButton.addEventListener('click', play)
+
+let draggedCandy 
+let replacedCandy
+let draggedSquare
+let replacedSquare
+let validMoves
+
+let intervalID
 
 function setUpBoard() {
   for(let i = 0; i < 64; i++) {
@@ -26,12 +48,6 @@ function setUpBoard() {
     squares.push(square)
   }
 }
-
-let draggedCandy 
-let replacedCandy
-let draggedSquare
-let replacedSquare
-let validMoves
 
 function addEventListeners() {
   squares.forEach(square => {
@@ -86,6 +102,8 @@ function dragEnd() {
     validMoves = []
     draggedSquare = null
     draggedCandy = null
+    movesAvailable--
+    movesInfo.innerText = movesAvailable
   } else if(replacedSquare && validMove() == false){
     squares[draggedSquare].style.backgroundImage = draggedCandy
     squares[replacedSquare].style.backgroundImage = replacedCandy
@@ -101,9 +119,16 @@ function dragEnd() {
 function popCandies() {
   var audio = new Audio('sound-effects/bomb-pop.mp3');
   audio.play();
+  movesAvailable--
+  movesInfo.innerText = movesAvailable
+  let collected = 0
   for(i = 0; i < 64; i++) {
+    if(squares[i].style.backgroundImage === requiredCandyImage.style.backgroundImage) {
+      collected += 1
+    }
     squares[i].style.backgroundImage = ''
   }
+  handleScore(collected)
 }
 
 function validMove() {
@@ -136,6 +161,41 @@ function dropCandies() {
   }
 }
 
+let gameOver = false
+
+function clearBoard() {
+  for(let i = 0; i < 64; i++) {
+    squares[i].style.backgroundImage = ''
+  }
+}
+
+function setLevel() {
+  clearBoard()
+  movesTitle.innerText = 'Moves: '
+  levelTitle.innerText = 'Level: '
+  candiesTimes.innerText = 'x'
+  levelConfiguration = levels[currentLevel]
+  levelInfo.innerText = currentLevel + 1
+  setRequiredCandyImage()
+  candiesInfo.innerText = levelConfiguration.candiesRequired[1]
+  movesInfo.innerText = levelConfiguration.movesAllowed
+  movesAvailable = levelConfiguration.movesAllowed
+  candiesLeft = levelConfiguration.candiesRequired[1]
+}
+
+function handleScore(candiesCollected) {
+  if(candiesLeft - candiesCollected <= 0) {
+    candiesLeft = 0
+    var audio = new Audio('sound-effects/level-up.mp3');
+    audio.play();
+    currentLevel += 1
+    setLevel()
+  } else {
+    candiesLeft -= candiesCollected
+    candiesInfo.innerText = candiesLeft
+  }
+}
+
 function matchRowOfThree() {
   const invalid = [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55]
   for(let i = 0; i < 61; i++) {
@@ -146,8 +206,9 @@ function matchRowOfThree() {
       if(!isEmpty && sequence.every(index => {
         return squares[index].style.backgroundImage == matchedColor
       })) {
-        score += 3
-        scoreBoard.innerHTML = score
+        if(matchedColor === requiredCandyImage.style.backgroundImage) {
+          handleScore(3)
+        }
         sequence.forEach(index => {
           squares[index].style.backgroundImage = ''
         })
@@ -168,8 +229,9 @@ function matchRowOfFour() {
       if(!isEmpty && sequence.every(index => {
         return squares[index].style.backgroundImage == matchedColor
       })) {
-        score += 4
-        scoreBoard.innerHTML = score
+        if(matchedColor === requiredCandyImage.style.backgroundImage) {
+          handleScore(4)
+        }
         sequence.forEach(index => {
           if(index == i) {
             squares[index].style.backgroundImage = "url(images/bomb.png)"
@@ -194,8 +256,10 @@ function matchColumnOfThree() {
     if(!isEmpty && sequence.every(index => {
       return squares[index].style.backgroundImage == matchedColor
     })) {
-      score += 3
-      scoreBoard.innerHTML = score
+      if(matchedColor === requiredCandyImage.style.backgroundImage) {
+        handleScore(3)
+        candiesInfo.innerText = candiesLeft
+      }
       sequence.forEach(index => {
         squares[index].style.backgroundImage = ''
       })
@@ -213,8 +277,10 @@ function matchColumnOfFour() {
     if(!isEmpty && sequence.every(index => {
       return squares[index].style.backgroundImage == matchedColor
     })) {
-      score += 4
-      scoreBoard.innerHTML = score
+      if(matchedColor === requiredCandyImage.style.backgroundImage) {
+        handleScore(4)
+        candiesInfo.innerText = candiesLeft
+      }
       sequence.forEach(index => {
         if(index == i) {
           squares[index].style.backgroundImage = "url(images/bomb.png)"
@@ -238,19 +304,30 @@ function matchCandies() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const board = document.getElementById('board')
   setUpBoard()
-  addEventListeners()
-  dropCandies()
-  matchCandies()
 })
 
-window.setInterval(function() {
-  removeEventListeners()
+function setRequiredCandyImage() {
+  colors.forEach(color => {
+    if(color.includes(levelConfiguration.candiesRequired[0])) {
+      requiredCandyImage.style.backgroundImage = color
+      return
+    }
+  })
+}
+
+function play() {
+  setLevel()
   addEventListeners()
   dropCandies()
   matchCandies()
-  }, 100
-)
+  intervalID = window.setInterval(function() {
+    removeEventListeners()
+    addEventListeners()
+    dropCandies()
+    matchCandies()
+    }, 100
+  )
+}
 
 
