@@ -99,7 +99,7 @@ function dragDrop() {
 }
 
 function dragEnd() {
-  if(replacedSquare && validMove()) {
+  if(replacedSquare && draggedSquare && validMove()) {
     replacedSquare = null
     replacedCandy = null
     validMoves = []
@@ -107,7 +107,7 @@ function dragEnd() {
     draggedCandy = null
     movesAvailable--
     movesInfo.innerText = movesAvailable
-  } else if(replacedSquare && validMove() == false){
+  } else if(replacedSquare && draggedSquare && validMove() == false){
     squares[draggedSquare].style.backgroundImage = draggedCandy
     squares[replacedSquare].style.backgroundImage = replacedCandy
     var audio = new Audio('sound-effects/drop.mp3')
@@ -150,11 +150,14 @@ function popDynamite() {
     }
   })
   handleScore(collected)
-
 } 
 
+function isSwitchingSpecial() {
+  return (draggedCandy.includes('bomb') || draggedCandy.includes('dynamite') || replacedCandy.includes('bomb') || replacedCandy.includes('dynamite'))
+}
+
 function validMove() {
-  return validMoves.includes(replacedSquare)
+  return (validMoves.includes(replacedSquare) && !isSwitchingSpecial())
 }
 
 function switchCandies() {
