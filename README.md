@@ -17,4 +17,4 @@ Once you complete the final level, the game will automatically reset itself.
 By clicking the Start button, you go back to Level 1
 
 # Credits
-The base game was created by coding along [@kubowania] (https://www.github.com/kubowania) 's YouTube tutorial. You can find it here: https://youtu.be/XD5sZWxwJUk
+The base for the game was created by coding along @kubowania's (https://www.github.com/kubowania) YouTube tutorial. You can find it here: https://youtu.be/XD5sZWxwJUk

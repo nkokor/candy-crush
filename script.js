@@ -50,26 +50,30 @@ function setUpBoard() {
 
 function addEventListeners() {
   squares.forEach(square => {
-    if(square.style.backgroundImage != '' && !square.style.backgroundImage.includes('bomb')) {
+    if(square.style.backgroundImage != '' && !square.style.backgroundImage.includes('bomb') && !square.style.backgroundImage.includes('dynamite')) {
       square.addEventListener('dragstart', dragStart)
       square.addEventListener('dragover', dragOver)
       square.addEventListener('drop', dragDrop)
       square.addEventListener('dragend', dragEnd)
     } else if(square.style.backgroundImage.includes('bomb')) {
-      square.addEventListener('click', popCandies)
+      square.addEventListener('click', popBomb)
+    } else if(square.style.backgroundImage.includes('dynamite')) {
+      square.addEventListener('click', popDynamite)
     }
   })
 }
 
 function removeEventListeners() {
   squares.forEach(square => {
-    if(square.style.backgroundImage != '' && !square.style.backgroundImage.includes('bomb')) {
+    if(square.style.backgroundImage != '' && !square.style.backgroundImage.includes('bomb') && !square.style.backgroundImage.includes('dynamite')) {
       square.removeEventListener('dragstart', dragStart)
       square.removeEventListener('dragover', dragOver)
       square.removeEventListener('drop', dragDrop)
       square.removeEventListener('dragend', dragEnd)
     } else if(square.style.backgroundImage.includes('bomb')) {
-      square.removeEventListener('click', popCandies)
+      square.removeEventListener('click', popBomb)
+    } else if(square.style.backgroundImage.includes('dynamite')) {
+      square.removeEventListener('click', popDynamite)
     }
   })
 }
@@ -106,18 +110,18 @@ function dragEnd() {
   } else if(replacedSquare && validMove() == false){
     squares[draggedSquare].style.backgroundImage = draggedCandy
     squares[replacedSquare].style.backgroundImage = replacedCandy
-    var audio = new Audio('sound-effects/drop.mp3');
-    audio.play();
+    var audio = new Audio('sound-effects/drop.mp3')
+    audio.play()
   } else {
     squares[draggedSquare].style.backgroundImage = draggedCandy
-    var audio = new Audio('sound-effects/drop.mp3');
+    var audio = new Audio('sound-effects/drop.mp3')
     audio.play();
   }
 }
 
-function popCandies() {
-  var audio = new Audio('sound-effects/bomb-pop.mp3');
-  audio.play();
+function popBomb() {
+  var audio = new Audio('sound-effects/bomb-pop.mp3')
+  audio.play()
   movesAvailable--
   movesInfo.innerText = movesAvailable
   let collected = 0
@@ -129,6 +133,25 @@ function popCandies() {
   }
   handleScore(collected)
 }
+
+function popDynamite() {
+  var audio = new Audio('sound-effects/dynamite-pop.mp3')
+  audio.play()
+  movesAvailable--
+  movesInfo.innerText = movesAvailable
+  let popAreaIDs = [parseInt(this.id) - 1, parseInt(this.id) + 1, parseInt(this.id) - width, parseInt(this.id) + width, parseInt(this.id)]
+  let collected = 0
+  squares.forEach(square => {
+    if(popAreaIDs.includes(parseInt(square.id))) {
+      if(square.style.backgroundImage === requiredCandyImage.style.backgroundImage) {
+        collected += 1
+      }
+      square.style.backgroundImage = ''
+    }
+  })
+  handleScore(collected)
+
+} 
 
 function validMove() {
   return validMoves.includes(replacedSquare)
@@ -313,7 +336,7 @@ function matchSquareOfFour() {
         }
         sequence.forEach(index => {
           if(index == i) {
-            squares[index].style.backgroundImage = "url(images/bomb.png)"
+            squares[index].style.backgroundImage = "url(images/dynamite.png)"
             var audio = new Audio('sound-effects/bomb-created.mp3');
             audio.play();
           } else {
