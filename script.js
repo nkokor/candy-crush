@@ -43,7 +43,6 @@ function setUpBoard() {
     square.style.backgroundImage = colors[candyColorIndex]
     square.setAttribute('draggable', true)
     square.setAttribute('id', i)
-    square.className = 'square'
     board.appendChild(square)
     squares.push(square)
   }
@@ -161,8 +160,6 @@ function dropCandies() {
   }
 }
 
-let gameOver = false
-
 function clearBoard() {
   for(let i = 0; i < 64; i++) {
     squares[i].style.backgroundImage = ''
@@ -183,13 +180,17 @@ function setLevel() {
   candiesLeft = levelConfiguration.candiesRequired[1]
 }
 
+function levelUp() {
+  candiesLeft = 0
+  var audio = new Audio('sound-effects/level-up.mp3');
+  audio.play();
+  currentLevel + 1 < levels.length ? currentLevel += 1 : currentLevel = 0
+  setLevel()
+}
+
 function handleScore(candiesCollected) {
   if(candiesLeft - candiesCollected <= 0) {
-    candiesLeft = 0
-    var audio = new Audio('sound-effects/level-up.mp3');
-    audio.play();
-    currentLevel + 1 < levels.length ? currentLevel += 1 : currentLevel = 0
-    setLevel()
+    levelUp()
   } else {
     candiesLeft -= candiesCollected
     candiesInfo.innerText = candiesLeft
@@ -347,7 +348,31 @@ function setRequiredCandyImage() {
   })
 }
 
+function clearScoreBoard() {
+  currentLevel = 0
+  levelTitle.innerText = ''
+  levelInfo.innerText = ''
+  movesTitle.innerText = ''
+  movesInfo.innerText = '' 
+  requiredCandyImage.style.backgroundImage = ''
+  candiesTimes.innerText = ''
+  candiesInfo.innerText = ''
+}
+
+function checkGameOver() {
+  if(movesAvailable == 0) {
+    var audio = new Audio('sound-effects/game-over.mp3');
+    audio.play();
+    clearInterval(intervalID)
+    clearScoreBoard()
+    removeEventListeners()
+  }
+}
+
 function play() {
+  var audio = new Audio('sound-effects/start.mp3');
+  audio.play();
+  currentLevel = 0
   setLevel()
   addEventListeners()
   dropCandies()
@@ -357,6 +382,7 @@ function play() {
     addEventListeners()
     dropCandies()
     matchCandies()
+    checkGameOver()
     }, 100
   )
 }
