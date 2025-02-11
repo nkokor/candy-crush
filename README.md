@@ -1,5 +1,5 @@
 # candy-crush
-A simple game inspired by Candy Crush made using JavaScript, CSS and HTML. More features and levels in progress.
+A simple game inspired by Candy Crush made using JavaScript, CSS and HTML.
 
 # Gameplay screenshot
 ![Screenshot](gameplay.jpg)
